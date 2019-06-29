@@ -18,6 +18,14 @@ pip install -r requirements.txt
 python main.py
 ```
 
+# Как запустить тесты
+
+Пример:
+
+```
+python -m pytest adapters/inosmi_ru.py
+```
+
 # Цели проекта
 
 Код написан в учебных целях. Это урок из курса по веб-разработке — [Девман](https://dvmn.org).
