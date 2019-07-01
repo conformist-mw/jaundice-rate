@@ -36,3 +36,8 @@ def remove_buzz_tags(soup, blacklist=DEFAULT_BLACKLIST_TAGS, unwraplist=DEFAULT_
             tag.decompose()
         elif tag.name in unwraplist:
             tag.unwrap()
+
+def remove_all_tags(soup):
+    """Unwrap all tags."""
+    for tag in soup.find_all(True):
+        tag.unwrap()
