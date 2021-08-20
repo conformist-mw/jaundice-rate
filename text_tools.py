@@ -1,7 +1,5 @@
 import string
 
-import pymorphy2
-
 
 def _clean_word(word):
     word = word.replace('«', '').replace('»', '').replace('…', '')
@@ -21,9 +19,6 @@ def split_by_words(morph, text):
     return words
 
 
-
-
-
 def calculate_jaundice_rate(article_words, charged_words):
     """Расчитывает желтушность текста.
 
@@ -40,5 +35,3 @@ def calculate_jaundice_rate(article_words, charged_words):
     score = len(found_charged_words) / len(article_words) * 100
 
     return round(score, 2)
-
-

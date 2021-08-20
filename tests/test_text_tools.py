@@ -1,6 +1,6 @@
 import pymorphy2
 
-from text_tools import split_by_words, calculate_jaundice_rate
+from text_tools import calculate_jaundice_rate, split_by_words
 
 
 def test_split_by_words():
