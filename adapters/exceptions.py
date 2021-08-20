@@ -1,2 +1,2 @@
-class ArticleNotFound(Exception):
+class ArticleNotFoundError(Exception):
     pass

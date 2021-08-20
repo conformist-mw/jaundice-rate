@@ -1,7 +1,7 @@
 from . import inosmi_ru
-from .exceptions import ArticleNotFound
+from .exceptions import ArticleNotFoundError
 
-__all__ = ['SANITIZERS', 'ArticleNotFound']
+__all__ = ['SANITIZERS', 'ArticleNotFoundError']
 
 SANITIZERS = {
     'inosmi_ru': inosmi_ru.sanitize,

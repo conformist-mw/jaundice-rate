@@ -1,5 +1,6 @@
-import aiohttp
 import asyncio
+
+import aiohttp
 
 
 async def fetch(session, url):
@@ -11,7 +12,7 @@ async def fetch(session, url):
 async def main():
     async with aiohttp.ClientSession() as session:
         html = await fetch(session, 'http://example.com')
-        print(html)
+        print(html)  # noqa: T001
 
 
 asyncio.run(main())
