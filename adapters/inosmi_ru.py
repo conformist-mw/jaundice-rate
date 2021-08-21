@@ -6,12 +6,11 @@ from .html_tools import remove_all_tags, remove_buzz_attrs, remove_buzz_tags
 
 def sanitize(html, plaintext=False):
     soup = BeautifulSoup(html, 'html.parser')
-    articles = soup.select('article.article')
+    article = soup.select_one('article.article')
 
-    if len(articles) != 1:
+    if not article:
         raise ArticleNotFoundError()
 
-    article = articles[0]
     article.attrs = {}
 
     buzz_blocks = [
