@@ -4,7 +4,6 @@ from contextlib import contextmanager
 from enum import Enum
 from time import monotonic
 
-import aiofiles
 import aiohttp
 import anyio
 import pymorphy2
@@ -12,6 +11,7 @@ from async_timeout import timeout
 
 from adapters import SANITIZERS, ArticleNotFoundError
 from text_tools import calculate_jaundice_rate, split_by_words
+from utils import load_charged_dicts
 
 # noinspection PyArgumentList
 logging.basicConfig(
@@ -22,6 +22,8 @@ logging.basicConfig(
 logger = logging.getLogger(__file__)
 pymorphy2_logger = logging.getLogger('pymorphy2.opencorpora_dict.wrapper')
 pymorphy2_logger.disabled = True
+
+TIMEOUT = 3
 
 
 @contextmanager
@@ -44,13 +46,13 @@ class ProcessingStatus(Enum):
 
 
 async def fetch(session, url):
-    async with timeout(2):
+    async with timeout(TIMEOUT):
         async with session.get(url) as response:
             response.raise_for_status()
             return await response.text()
 
 
-async def process_article(session, url, negative_words, results):
+async def process_article(session, negative_words, morph, results, url):
     words_count = None
     rating = None
     status = ProcessingStatus.OK
@@ -58,7 +60,6 @@ async def process_article(session, url, negative_words, results):
         html = await fetch(session, url)
         with time_it():
             plaintext = SANITIZERS['inosmi_ru'](html, plaintext=True)
-            morph = pymorphy2.MorphAnalyzer()
             words = await split_by_words(morph, plaintext)
         words_count = len(words)
         rating = calculate_jaundice_rate(words, negative_words)
@@ -71,24 +72,29 @@ async def process_article(session, url, negative_words, results):
     results.append({
         'words_count': words_count,
         'rating': rating,
-        'status': status,
+        'status': status.value,
+        'url': url,
     })
 
 
 async def main(urls):
-    async with aiofiles.open('charged_dict/negative_words.txt') as file:
-        negative_words = (await file.read()).splitlines()
+    charged_words = load_charged_dicts()
+    morph = pymorphy2.MorphAnalyzer()
+
     results = []
     async with aiohttp.ClientSession() as session:
         async with anyio.create_task_group() as task_group:
             for url in urls:
                 task_group.start_soon(
-                    process_article, session, url, negative_words, results,
+                    process_article,
+                    session,
+                    charged_words,
+                    morph,
+                    results,
+                    url,
                 )
     for result in results:
-        print('Words count: ', result['words_count'])
-        print('Rating: ', result['rating'])
-        print('Status: ', result['status'])
+        logger.debug(result)
 
 if __name__ == '__main__':
     urls = (
