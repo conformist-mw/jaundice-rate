@@ -9,7 +9,7 @@ pip install -r requirements.txt
 #### How to run
 
 ```shell
-python main.py
+python process_article.py
 ```
 
 #### How to run tests
