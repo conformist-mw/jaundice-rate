@@ -3,6 +3,8 @@ import string
 from anyio import sleep
 from async_timeout import timeout
 
+TIMEOUT = 5
+
 
 def _clean_word(word):
     word = word.replace('«', '').replace('»', '').replace('…', '')
@@ -11,7 +13,7 @@ def _clean_word(word):
     return word
 
 
-async def split_by_words(morph, text, time_out=200):
+async def split_by_words(morph, text, time_out=TIMEOUT):
     """Учитывает пунктуацию, регистр и словоформы, выкидывает предлоги."""
     words = []
     async with timeout(time_out):

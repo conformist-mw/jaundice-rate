@@ -10,7 +10,7 @@ import pymorphy2
 from async_timeout import timeout
 
 from adapters import SANITIZERS, ArticleNotFoundError
-from text_tools import calculate_jaundice_rate, split_by_words
+from text_tools import TIMEOUT, calculate_jaundice_rate, split_by_words
 from utils import load_charged_dicts
 
 # noinspection PyArgumentList
@@ -22,8 +22,6 @@ logging.basicConfig(
 logger = logging.getLogger(__file__)
 pymorphy2_logger = logging.getLogger('pymorphy2.opencorpora_dict.wrapper')
 pymorphy2_logger.disabled = True
-
-TIMEOUT = 3
 
 
 @contextmanager
