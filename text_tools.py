@@ -1,5 +1,8 @@
 import string
 
+from anyio import sleep
+from async_timeout import timeout
+
 
 def _clean_word(word):
     word = word.replace('«', '').replace('»', '').replace('…', '')
@@ -8,22 +11,23 @@ def _clean_word(word):
     return word
 
 
-def split_by_words(morph, text):
+async def split_by_words(morph, text, time_out=200):
     """Учитывает пунктуацию, регистр и словоформы, выкидывает предлоги."""
     words = []
-    for word in text.split():
-        cleaned_word = _clean_word(word)
-        normalized_word = morph.parse(cleaned_word)[0].normal_form
-        if len(normalized_word) > 2 or normalized_word == 'не':
-            words.append(normalized_word)
+    async with timeout(time_out):
+        for word in text.split():
+            cleaned_word = _clean_word(word)
+            normalized_word = morph.parse(cleaned_word)[0].normal_form
+            if len(normalized_word) > 2 or normalized_word == 'не':
+                words.append(normalized_word)
+            await sleep(0)
     return words
 
 
 def calculate_jaundice_rate(article_words, charged_words):
-    """Расчитывает желтушность текста.
+    """Рассчитывает желтушность текста.
 
-    Принимает список "заряженных"
-    слов и ищет их внутри article_words.
+    Принимает список "заряженных" слов и ищет их внутри article_words.
     """
     if not article_words:
         return 0.0
